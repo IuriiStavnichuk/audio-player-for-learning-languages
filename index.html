@@ -1,0 +1,229 @@
+<!doctype html>
+<html ng-app="myApp" >
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <title>Study phrases</title>
+    <link rel="apple-touch-icon" href="apple-touch-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png" />
+    <link rel="stylesheet" href="assets/css/bootstrap.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <script src="assets/js/jquery-2.0.2.min.js"></script>
+    <script src="assets/js/d3.min.js"></script>
+    <script src="assets/js/jquery-ui.js"></script>
+    <script src="bar_chart/js/statistic.js"></script>
+    <link rel="stylesheet" href="bar_chart/css/statistic.css" />
+
+    <script type="text/javascript">
+        (function(){
+            if (typeof(window.orientation) !== 'undefined')
+            {
+                function getDeviceWidth()
+                {
+                    var deviceWidth = window.orientation == 0 ? window.screen.width : window.screen.height;
+                    if (navigator.userAgent.indexOf('Android') >= 0 && window.devicePixelRatio)
+                        deviceWidth = deviceWidth / window.devicePixelRatio;
+
+                    return deviceWidth;
+                }
+
+                var deviceWidth = getDeviceWidth();
+                var maxWidth = 1900;
+                if (deviceWidth < maxWidth)
+                {
+                    if (window.orientation == 0 || window.orientation == 180)
+                        document.write('<meta name="viewport" content="width=device-width">');
+                    else
+                        document.write('<meta name="viewport" content="width=device-height">');
+                }
+                else
+                    document.write('<meta name="viewport" content="width=' + maxWidth + '">');
+            }
+        })();
+        $(function () {
+            if (navigator.userAgent.indexOf('Safari') != -1 &&
+                    navigator.userAgent.indexOf('Chrome') == -1) {
+                $("body").addClass("safari");
+            }
+        });
+    </script>
+
+</head>
+
+<body ng-controller='AppCtrl'>
+
+<div class="content">
+
+    <div class="audio-player" >
+        <div id='top-control-bar' ng-show="topControlBarVisibility==1" ng-init="topControlBarVisibility=1">
+            <div class="cell">
+                <a class="glyphicon glyphicon-step-backward" id="prev"></a>
+            </div>
+            <div class="cell">
+                <a class="glyphicon glyphicon-play" id="play"></a>
+            </div>
+            <div class="cell">
+                <a class="glyphicon glyphicon-step-forward" id="next"></a>
+            </div>
+        </div>
+        <div id='current-track-name' ng-show="topControlBarVisibility==1">
+            <div id='current-id'></div><div id='current-track'></div>
+        </div>
+        <div id="matte" ng-show="showMatte" ng-init="showMatte=0"></div>
+        <test></test>
+        <div id='next-track'></div>
+    </div>
+
+
+    <div id='buttom-control-bar'>
+
+        <div class="cell">
+            <select ng-model="numberOfRepetitions" ng-options="v as o for (o,v) in listOfOptions"
+                    ng-init="numberOfRepetitions='1';listOfOptions={1:'1',2:'2',3:'3',4:'4',5:'5',6:'6'}">
+            </select>
+        </div>
+        <div class="cell">
+            <select ng-model="timeDelayBetweenTracks" ng-options="v3 as o3 for (o3,v3) in listOfOptions3"
+                    ng-init="timeDelayBetweenTracks='1';listOfOptions={0:'0',0.5:'0.5',1:'1',1.5:'1.5',2:'2',2.5:'2.5',3:'3.5',4:'4',4.5:'4.5',5:'5','man':'10000'}">
+            </select>
+        </div>
+        <div class="cell">
+            <select ng-model="timeDelayBetweenRepetitions" ng-options="v2 as o2 for (o2,v2) in listOfOptions2"
+                    ng-init="timeDelayBetweenRepetitions='0.5';listOfOptions2={0:'0',0.5:'0.5',1:'1',1.5:'1.5',2:'2',2.5:'2.5',3:'3.5',4:'4',4.5:'4.5',5:'5'}">
+            </select>
+        </div>
+
+        <div class="cell">
+            <select ng-model="jsonName" ng-options="v as o for (o,v) in fileListForSelect"
+                    ng-init="jsonName='phrases';fileListForSelect={phrases:'phrases',sentences:'sentences',interview:'interview',programming:'programming', letters:'letters',words:'words',favorites:'favorites',demo:'demo'}">
+            </select>
+        </div>
+        <div class="cell">
+            <a class="glyphicon glyphicon-transfer" ng-click="reverse=!reverse;changeDirectionOfTranslation(reverse)"></a>
+        </div>
+        <div class="cell">
+            <a class="glyphicon glyphicon-random" ng-click="shuffle()"></a>
+        </div>
+        <div class="cell">
+            <a  ng-class="{ 'glyphicon glyphicon-collapse-up' : !additionalControlBarVisibility, 'glyphicon glyphicon-collapse-down' : additionalControlBarVisibility}" ng-click="additionalControlBarVisibility=!additionalControlBarVisibility" ng-class="{active:showTestPage}"></a>
+        </div>
+        <div class="row">
+            <div class="cell">
+                <span>REPETITION</span>
+            </div>
+            <div class="cell">
+                <span>D.B.TRACK</span>
+            </div>
+            <div class="cell">
+                <span>D.B.REPETITION</span>
+            </div>
+            <div class="cell">
+                <span>PLAYLIST</span>
+            </div>
+            <div class="cell">
+                <span>SWAP LANG.</span>
+            </div>
+            <div class="cell">
+                <span>SHUFFLE</span>
+            </div>
+            <div class="cell">
+                <span>MENU</span>
+            </div>
+        </div>
+        <div id='additional-control-bar' ng-show="additionalControlBarVisibility">
+            <div class="cell">
+                <a class="glyphicon glyphicon-stats" ng-click="chartVisibility=!chartVisibility;showSetupPage=0;showTestPage=0;additionalControlBarVisibility=0" ng-class="{active:chartVisibility}"></a>
+                <span>STATISTICS</span>
+                <a class="glyphicon glyphicon-question-sign" ng-click="showTestPage=!showTestPage;showMatte=0;chartVisibility=0;showSetupPage=0;_player.src ='';topControlBarVisibility=!topControlBarVisibility;additionalControlBarVisibility=0;testInfoShow=1;testSubmitFormShow=0; " ng-class="{active:showTestPage}"></a>
+                <span>TEST</span>
+                <a class="glyphicon glyphicon-cog" ng-click="showSetupPage=!showSetupPage;chartVisibility=0;additionalControlBarVisibility=0;trustedResultForShow='';"  ng-class="{active:showSetupPage}"></a>
+                <span>SETUP</span>
+            </div>
+        </div>
+    </div>
+    <div id='setup-page' ng-show="showSetupPage" ng-init="showSetupPage=0">
+        <div ng-click="showSetupPage=0;showMatte=0" class="glyphicon glyphicon-remove right"></div>
+
+        <div class="field">
+            <label>Group</label>
+            <select ng-model="firstRecord" ng-options="v as o for (o,v) in listOfFirstRecords">
+            </select>
+        </div>
+        <div class="field">
+            <label>Number of repetitions:</label>
+            <select ng-model="numberOfRepetitions" ng-options="v as o for (o,v) in listOfOptions"
+                    ng-init="numberOfRepetitions='1';listOfOptions={1:'1',2:'2',3:'3',4:'4',5:'5',6:'6'}">
+            </select>
+        </div>
+        <div class="field">
+            <label>Time between repetition:</label>
+            <select ng-model="timeDelayBetweenRepetitions" ng-options="v2 as o2 for (o2,v2) in listOfOptions2"
+                    ng-init="timeDelayBetweenRepetitions='0.5';listOfOptions2={0:'0',0.5:'0.5',1:'1',1.5:'1.5',2:'2',2.5:'2.5',3:'3.5',4:'4',4.5:'4.5',5:'5'}">
+            </select>
+        </div>
+        <div class="field">
+            <label>Time between tracks:</label>
+            <select ng-model="timeDelayBetweenTracks" ng-options="v3 as o3 for (o3,v3) in listOfOptions3"
+                    ng-init="timeDelayBetweenTracks='1';listOfOptions3={0:'0',0.5:'0.5',1:'1',1.5:'1.5',2:'2',2.5:'2.5',3:'3.5',4:'4',4.5:'4.5',5:'5','man':'10000'}">
+            </select>
+        </div>
+        <div class="field">
+            <label>Play tracks:</label>
+            <select ng-model="fieldVisible" ng-options="v4 as o4 for (o4,v4) in listOfOptions4"
+                    ng-init="fieldVisible='all';listOfOptions4={all:'all',even:'even',odd:'odd'}">
+            </select>
+        </div>
+        <div class="field">
+            <label>Choice playlist:</label>
+            <select ng-model="jsonName" ng-options="v as o for (o,v) in fileListForSelect"
+                    ng-init="jsonName='phrases';fileListForSelect={phrases:'phrases',sentences:'sentences',interview:'interview',programming:'programming', letters:'letters',words:'words',favorites:'favorites',demo:'demo'}">
+            </select>
+            <!--ng-init="jsonName='demo';fileListForSelect={demo:'demo', favorites:'favorites'}">-->
+        </div>
+        <div class="field">
+            <label>Direction of translation</label>
+            <div><a id='directionOfTranslation' ng-click="reverse=!reverse;changeDirectionOfTranslation(reverse)">EN>RU</a></div>
+        </div>
+        <div class="field">
+            <label>Shuffle mode:</label>
+            <div><a id='shuffle' ng-click="shuffle()">SHUFFLE</a></div>
+        </div>
+        <div class="field">
+            <label>Reset test results:</label>
+            <div><a ng-click="clearLocalStorage()">RESET</a></div>
+        </div>
+    </div>
+
+    <div ng-show="chartVisibility" ng-init="chartVisibility=0" id="chart-wrapper">
+        <div ng-click="chartVisibility=0" class="glyphicon glyphicon-remove right"></div>
+        <div id="svgcontainer">
+            <div id="slider">
+                <input type="text" id="sliderMaxValue"/>
+                <div id="slider-range"></div>
+                <input type="text" id="sliderMinValue"/>
+            </div>
+        </div>
+    </div>
+
+    <playlist></playlist>
+
+    <div class='test-result' ng-show='testResultFrame' ng-init='testResultFrame=0' ng-bind-html='trustedTestResult' ng-click=testResultFrame=0;removeTestResultButtonShow=0></div>
+
+    <div id="loading-indicator-lightbox" ng-show="loadingIndicatorVisible" ng-init="loadingIndicatorVisible=1"></div>
+
+    <div id="error-message" ng-init="errorMessage=false" ng-show="errorMessage"  ng-click="errorMessage=false">
+        <div ng-click="errorMessage=false" class="glyphicon glyphicon-remove right"></div>
+        <p ng-bind-html="trustedErrorMessage"></p>
+    </div>
+</div>
+
+<script src="assets/js/angular.js"></script>
+<script src="main.js"></script>
+<script src="test.js"></script>
+
+
+</body>
+</html>

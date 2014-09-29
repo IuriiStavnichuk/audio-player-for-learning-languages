@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="apple-touch-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png" />
+    <title>Study phrase</title>
+
+    <!--<link rel="stylesheet" href="bootstrap.css">-->
+    <script src="assets/js/jquery-2.0.2.min.js"></script>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+
+    <script type="text/javascript">
+        (function(){
+            if (typeof(window.orientation) !== 'undefined')
+            {
+                function getDeviceWidth()
+                {
+                    var deviceWidth = window.orientation == 0 ? window.screen.width : window.screen.height;
+                    if (navigator.userAgent.indexOf('Android') >= 0 && window.devicePixelRatio)
+                        deviceWidth = deviceWidth / window.devicePixelRatio;
+
+                    return deviceWidth;
+                }
+
+                var deviceWidth = getDeviceWidth();
+                var maxWidth = 1900;
+                if (deviceWidth < maxWidth)
+                {
+                    if (window.orientation == 0 || window.orientation == 180)
+                        document.write('<meta name="viewport" content="width=device-width">');
+                    else
+                        document.write('<meta name="viewport" content="width=device-height">');
+                }
+                else
+                    document.write('<meta name="viewport" content="width=' + maxWidth + '">');
+            }
+        })();
+    </script>
+    <script src="assets/js/angular.js"></script>
+    <script src="test.js"></script>
+    <!--<script src="directives.js"></script>-->
+</head>
+
+<body ng-app="myApp" >
+<div class="content" ng-controller="AppCtrl">
+    <div class="audio-player">
+        <table>
+            <!--<tr style="display:none">-->
+            <tr>
+                <td class="left"><a class="glyphicon glyphicon-step-backward" id="prev"></a></td>
+                <td><a class="glyphicon glyphicon-play" id="play"></a></td>
+                <td class="right"><a class="glyphicon glyphicon-step-forward" id="next"></a></td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div id='current-track-name'><span id='current-id'></span><span id='current-track'>Click on track</span></div>
+                </td>
+            </tr>
+            <tr>
+                <td id='control-bar' colspan="3">
+                    <!--<div id='control-bar'>-->
+                    <input type='text' ng-model='numberOfRepetitions' ng-init='numberOfRepetitions=2'>
+                    <input type='text' ng-model='timeDelayBetweenRepetitions' ng-init='timeDelayBetweenRepetitions=30.3'>
+                    <input type='text' ng-model='timeDelayBetweenTracks' ng-init='timeDelayBetweenTracks=30.2'>
+                    <div class='change-filelist'>
+                        <div><a class='active' id='btn-sentences' ng-click="changeFilelist('btn-sentences')">Sentences</a></div>
+                        <div><a id='btn-words' ng-click="changeFilelist('btn-words')">Words</a></div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <table style="font-size:12px">
+            <tr>
+                <td>
+                    <input  style="width:80%" type='text'  ng-model='answer'>
+
+                    <a ng-click="answerSave();" style="color:#fff">Submit</a>
+                </td>
+            </tr>
+            <tr style="background-color: #fff">
+                 <td ng-bind-html-unsafe="result"></td>
+            </tr>
+            <tr>
+            <td>
+                <a ng-click='loadStorage()' style="color:#fff">Извлечь данные</a>
+            </td>
+            </tr>
+            <tr>
+                <td>
+                    <a ng-click="clearLocalStorage()" style="color:#fff">clearLocalStorage</a>
+                </td>
+            </tr>
+        </tr>
+        </table>
+    </div>
+
+
+    <playlist></playlist>
+
+    </br>
+</div>
+
+</body>
+</html>
