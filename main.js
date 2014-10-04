@@ -4,21 +4,11 @@ app.run(function($rootScope) {
     $rootScope.nextElement='';
 })
 
-//app.factory('jsonplaylist', function($http) {
-//    return $http.get('assets/json/fileslistSentences.json');
-//});
-//app.factory('jsonplaylistwords', function($http) {
-//    return $http.get('assets/json/fileslistWords.json');
-//});
-
 app.controller ("AppCtrl", function ($scope, $rootScope, $http, $sce) {
-//$scope.errorMessage="";
-//app.controller ("AppCtrl", function ($scope, $http, jsonplaylist, jsonplaylistwords) {
-//$scope.path="mp3/sentences/";
+
 $scope.workingArrayWithPlaylist=[];
 
     var timers = [];var timersForCheck = [];
-    //jsonplaylist.success(function(data) { $scope.workingArrayWithPlaylist = data.playlist; });
 
     $scope.$watch('jsonName', function ( newValue, oldValue, $scope ) {
 
@@ -38,31 +28,13 @@ $scope.workingArrayWithPlaylist=[];
                 )]=i;
             }
 
-            // $scope.workingArrayWithPlaylist = $scope.sourceArrayWithPlaylist.slice();
-
            var first=$scope.sourceArrayWithPlaylist.length;
            var realFirst=$scope.sourceArrayWithPlaylist.length-first;
 
            for (var i= realFirst,j=0; i<realFirst+100; i=i+1) {
                 $scope.workingArrayWithPlaylist[j++]=$scope.sourceArrayWithPlaylist[i];
            }
-
-            //COMMENT IT
-
-            //var first=499; realFirst=$scope.sourceArrayWithPlaylist.length-first;
-            //for (var i= realFirst,j=0; i<realFirst+25; i=i+2) {
-            //    $scope.workingArrayWithPlaylist[j++]=$scope.sourceArrayWithPlaylist[i];
-            //}
-            //            setTimeout ( function() {
-            //                    $('#playlist a').css('color','#fff !important');
-            //                    $('#playlist a').hover( function(){$(this).css('background-color','#fff !important')});
-            //                    $('#current-track-name').css('display','none');
-            //                    $('#next-track').css('display','none');
-            //                }
-            //                , 100)
-
-            //COMMENT IT
-            $scope.loadingIndicatorVisible=0;
+           $scope.loadingIndicatorVisible=0;
         });
 
         $scope._player.pause();
@@ -71,58 +43,23 @@ $scope.workingArrayWithPlaylist=[];
         $rootScope.id=0;
         window.clearTimeout(timersForCheck);
         document.getElementById("current-track").innerHTML="click on track below";
-//        if ($('#next-track').length > 0) { document.getElementById("next-track").innerHTML= "▪" };
-
     });
 
     $scope.$watch('firstRecord', function ( newValue, oldValue, $scope ) {
 
         if ( newValue!=oldValue)   {
 
-           // $http.get($scope.currentFilelist).success(function(data) {
                 $scope.realFirstRecord= ($scope.sourceArrayWithPlaylist.length-$scope.firstRecord)<0 ? 0 : $scope.sourceArrayWithPlaylist.length-$scope.firstRecord;
                 $scope.workingArrayWithPlaylist =$scope.sourceArrayWithPlaylist.splice( $scope.realFirstRecord, 200);
-               // console.log ("$scope.realFirstRecord >> ", $scope.realFirstRecord)
-           // });
-
         }
 
     });
-//    $scope.$watch('fieldVisible', function ( newValue, oldValue, $scope ) {
-//
-//        if ( newValue!=oldValue)   {
-//            $scope.workingArrayWithPlaylist.length=0;
-//            switch ($scope.fieldVisible) {
-//                case "even":
-//                    for (var i= 0,j=0; i<$scope.sourceArrayWithPlaylist.length; i=i+2) {
-//                         $scope.workingArrayWithPlaylist[j++]=$scope.sourceArrayWithPlaylist[i];
-//                    }
-//                    break;
-//                case "odd":
-//                    console.log ("odd>>>");
-//                    for (var i= 1,j=0; i<$scope.sourceArrayWithPlaylist.length; i=i+2) {
-//                        $scope.workingArrayWithPlaylist[j++]=$scope.sourceArrayWithPlaylist[i];
-//                    }
-//                    break;
-//                default:
-//                    $scope.workingArrayWithPlaylist=$scope.sourceArrayWithPlaylist.slice();
-//            }
-//        }
-//
-//    });
-
 
     $scope._player = document.getElementById('player');
     $scope._playlist = document.getElementById('playlist');
     $scope._play = document.getElementById('play');
-//  $scope._pause = document.getElementById('pause');
     $scope._prev = document.getElementById('prev');
     $scope._next = document.getElementById('next');
-
-//        $scope.initFunction= function (){
-//        $scope.indexInCycle=1; //for calculate delay
-//       // $scope.counter=1;      //for calculate each second
-//    }
 
     function callback (state, error, track){
         $scope.trustedErrorMessage = $sce.trustAsHtml("callbackERROR <strong> "+ state +" </strong><strong> "+ error +" </strong> ");
@@ -137,19 +74,6 @@ $scope.workingArrayWithPlaylist=[];
     }
 
     $scope.playTrack= function (id){
-//        try {
-//            if($scope._player.canPlayType('audio/mpeg') == "probably")
-//                callback("canPlay");
-//
-//            //If this event fires, then MP3s can be played
-//            $scope._player.addEventListener('canplaythrough', function(e){
-//                callback("canplaythrough");
-//            }, false);
-//
-//            //If this is fired, then client can't play MP3s
-//            $scope._player.addEventListener('error', function(e){
-//                callback("error", this.error)
-//            }, false);
 
         $scope._player.pause();
         $scope._player.src = "";
@@ -161,8 +85,6 @@ $scope.workingArrayWithPlaylist=[];
         $(".glyphicon.glyphicon-play").toggleClass('glyphicon-play glyphicon-pause');
 
         $rootScope.id= ( document.getElementById ( "track"+id) ||'' ) ? id : 0 ;
-
-        //   if ($scope.workingArrayWithPlaylist[$rootScope.id].checked===true) {
 
         $scope.selected = $scope._playlist.querySelector(".selected");
 
@@ -191,46 +113,8 @@ $scope.workingArrayWithPlaylist=[];
 
         $scope._player.play();
 
-//                var ii=0;
-//
-//                timersForCheck=setInterval (function run() {
-//
-//
-//                    ii++;
-//                    if ($scope._player.currentTime>0) {
-//                        $scope.trustedErrorMessage=$sce.trustAsHtml("id_1>>"+$rootScope.id+"  <br> "+"duration>>"+$scope._player.duration+"  <br> "+"currentTime>>"+$scope._player.currentTime+" <br> "+"currentTrack>>"+ $scope.currentTrack);
-//                        window.clearTimeout(timersForCheck)
-//
-//                        $scope.$apply();
-//                    }
-//                    else {
-//                        if (ii<5){
-//                            $scope.trustedErrorMessage=$sce.trustAsHtml("CYCLE id>>"+ii+"  "+$rootScope.id+"  <br> "+"duration>>"+$scope._player.duration+"  <br> "+"currentTime>>"+$scope._player.currentTime+" <br> "+"currentTrack>>"+ $scope.currentTrack);
-//                            var tmpSrc=$scope._player.src;
-//                            $scope._player.src="";
-//                            $scope._player.pause();
-//
-//                            $scope._player.src=tmpSrc;
-//                            $scope._player.play();
-//                            $scope.$apply();
-//                        } else {
-//                            window.clearTimeout(timersForCheck);
-//                            $scope.trustedErrorMessage=$sce.trustAsHtml("ERROR id>>"+$rootScope.id+"  <br> "+"duration>>"+$scope._player.duration+"  <br> "+"currentTime>>"+$scope._player.currentTime+" <br> "+"currentTrack>>"+ $scope.currentTrack);
-//                            $scope.errorMessage= true;
-//                            $rootScope.id++;
-//                            $scope.playTrack($rootScope.id);
-//                            $scope.$apply();
-//                        }
-//                    }
-//                },20);
-        //           }
-        //       }
-//        catch (e) {
-//            if(window.console && console.error("Error:" + e));
-//            callback("catch error", e, $rootScope.id+" "+$scope.currentTrack);
-//        }
     }
-    // $scope.increase==1;
+
     $scope.currentNumberOfRepetitions=1;
 
     $scope.playNextWidthDelay= function() {
@@ -284,15 +168,13 @@ $scope.workingArrayWithPlaylist=[];
             $scope.testInfoShow=0;
             $scope.testSubmitFormShow=1;
             $scope._player.removeEventListener("ended", $scope.playNextWidthDelay);
-            // $("#matte").css("display","block")
         }
 
 
         if (trackId % 2 == 1) {$scope.indexInCycle=0; $scope.currentNumberOfRepetitions=2;}   //if odd -finish loop
         else {$scope.indexInCycle=1; $scope.currentNumberOfRepetitions=1;}
 
-        //  $scope.initFunction();
-        $scope.playTrack(trackId); //break;
+        $scope.playTrack(trackId);
     }
 
     $scope.selectDeselectAllCheckers= function () {
@@ -301,48 +183,7 @@ $scope.workingArrayWithPlaylist=[];
         }
     }
 
-//    $scope.progressBar=function() {
-    //get current time in seconds
-    //var elapsedTime = Math.round($scope._player.currentTime);
-
-    //      console.log ("elapsedTime              >", $scope._player.currentTime );
-//      $scope.errorMessage= $scope._player.currentTime;
-    //console.log ("$scope._player.duration33;>>>", $scope._player.duration);
-    //if ($scope._player.duration<=$scope._player.currentTime)  {console.log ("YES>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");}
-    //update the progress bar
-//        if (canvas.getContext) {
-//            var ctx = canvas.getContext("2d");
-//            //clear canvas before painting
-//            ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-//            ctx.fillStyle = "rgb(255,0,0)";
-//            var fWidth = (elapsedTime / oAudio.duration) * (canvas.clientWidth);
-//            if (fWidth > 0) {
-//                ctx.fillRect(0, 0, fWidth, canvas.clientHeight);
-//            }
-//        }
-//    }
-
-//        $scope.playing=function() {
-//            console.log("$rootScope >>>", $rootScope.id, $scope.currentTrack)
-//        }
-
     $scope._player.addEventListener("ended", $scope.playNextWidthDelay);
-
-//    $scope._player.addEventListener("timeupdate", $scope.progressBar, true);
-
-//    timersForCheck=setInterval (function run() {
-//        $scope._player.addEventListener("onerror",   callback("onerror", "onerror", $rootScope.id+" "+$scope.currentTrack) );
-//    }, 50)
-
-    // $scope._player.addEventListener("playing", $scope.playing);
-
-
-//    $scope._player.addEventListener('loadedmetadata', function() {
-//        $scope._player.play();
-//    }, false);
-
-
-
 
     $scope._play.addEventListener("click", function () {
         if ($(".glyphicon.glyphicon-play").length) {
@@ -359,28 +200,6 @@ $scope.workingArrayWithPlaylist=[];
     $scope._next.addEventListener("click", $scope.playNext);
     $scope._prev.addEventListener("click", $scope.playPrev);
 
-
-//    $scope.changeFilelist= function (id) {
-
-    //        $scope._player.src = "";
-    //        for (var i = 0; i < timers.length; i++) { clearTimeout(timers[i]); }; timers.length=0;
-    //        document.getElementById("current-track").innerHTML="click track below";
-    //        document.getElementById("next-track").innerHTML= "";
-    //
-    //        $(".change-filelist a").removeClass();
-    //        $("#"+id).addClass( "active" );
-    //        switch (id) {
-    //            case "btn-words":
-    //                $scope.pathToMp3="mp3/words/";
-    //                jsonplaylistwords.success(function(data) { $scope.workingArrayWithPlaylist = data.playlist; });
-    //                break;
-    //            default:
-    //                $scope.pathToMp3="mp3/sentences/";
-    //                jsonplaylist.success(function(data) { $scope.workingArrayWithPlaylist = data.playlist; });
-    //                break;
-    //        }
-    //        $("#directionOfTranslation").html("RU►EN")
-//    }
 
     $scope.changeDirectionOfTranslation= function (reverse) {
         var tmpArray=[];
@@ -437,11 +256,6 @@ $scope.workingArrayWithPlaylist=[];
                 var workingArray=[];
                 loadResult=function() {
 
-
-                    //var tmp=localStorage.answers;
-                    //    if (localStorage.answers!==undefined) {
-                    // var localStorageArray=localStorage.answers.split(",");
-
                     var testArray=
                         "11,clobberingg,clobbering quibble,8,2013/9/24,"+
                             "12,reminiscebnt,reminisce<em>b</em><em>n</em>,2,2013/9/24,"+
@@ -494,7 +308,6 @@ $scope.workingArrayWithPlaylist=[];
                         workingArray.push( [ arrayWithUniqueTime [i], totalCharacters, totalErrors ]);
                     }
 
-                    //  }  //if (localStorage.answers
                 }
 
                 loadResult();
@@ -512,22 +325,13 @@ $scope.workingArrayWithPlaylist=[];
                 var currrent_field=1;
 
                 parsedCSV = parsedCSV.splice(1)           //delete first row
-                //var workingArray=parsedCSV.slice();     //create duplicate array
-
-
-//<desc="INIT" editor-fold defaultstate="collapsed" >
-//var x; var y;
                 var minValue=d3.min (workingArray, function(d) { return +d[currrent_field] });
                 var maxValue=d3.max (workingArray, function(d) { return +d[currrent_field] });
                 var margin = {top: 5, right: 0, bottom: 100, left: 25};
                 d3.chart_width=$("#chart-wrapper").width();
 
-                //d3.chart_height=($(document).height()/1.7) - margin.top - margin.bottom;
                 var pos=$("#buttom-control-bar").position();
                 d3.chart_height=(pos.top/1.2) - margin.top - margin.bottom;
-//            console.log("$(document).height()11>>>", d3.chart_height)
-//            d3.chart_height=(d3.chart_height>300)?300:d3.chart_height;
-//            console.log("$(document).height()22>>>", d3.chart_height)
                 $("svg").remove();
                 var svg = d3.select("#svgcontainer").append("svg")
                     .attr("id", "svg_")
@@ -566,7 +370,6 @@ $scope.workingArrayWithPlaylist=[];
                 $(".radio_field_choice").change( field_choice );
 
                 draw_svg();
-//</editor-fold>
 
                 function draw_svg () {
 
@@ -610,9 +413,7 @@ $scope.workingArrayWithPlaylist=[];
                     var colorScale = d3.scale.linear()
                         .domain([d3.min (workingArray, function(d) { return +d[currrent_field]; }), d3.max (workingArray, function(d) { return +d[currrent_field]; })])
                         .range([160, 60]);
-                    /*var colorScale = d3.scale.linear()
-                     .domain([0, d3.max (workingArray, function(d) { return d[currrent_field]; })])
-                     .range([#F6931F, #1C94C4]);*/
+
                     $(".bar").remove();
                     var bar= svg.selectAll(".bar")
                             .data(workingArray)
@@ -661,7 +462,6 @@ $scope.workingArrayWithPlaylist=[];
 
                     draw_svg();
                     reorder_array();
-                    //change label name
                     $('#y_axis_text ').text($('#label_field_choice_'+currrent_field).prop('innerHTML'));
                 }
 
@@ -709,7 +509,6 @@ $scope.workingArrayWithPlaylist=[];
                         delay = function(d, i) { return 0; }
                         ;
                     transition.selectAll(".x_axis_text")
-                        //.delay(delay)
                         .attr("transform", function(d) { return "translate(" + (x0(d[0])+5) + ", " + (d3.chart_height+3) + " ) rotate(-90)" })
                     ;
                 }
@@ -722,7 +521,6 @@ $scope.workingArrayWithPlaylist=[];
                         d3.chart_width=$("#chart-wrapper").width();
                         var pos=$("#buttom-control-bar").position();
                         d3.chart_height=(pos.top/1.2) - margin.top - margin.bottom;
-                        //d3.chart_height=$(document).height()/1.3 - margin.top - margin.bottom;
 
                         draw_svg();
 
@@ -760,18 +558,6 @@ app.directive("playlist", function () {
 })
 $( window ).ready(function() {
     recalculation ();
-//   console.log("browser>>>", $.browser.webkit )
-//    if((Browser.Platform.ios) || (Browser.Platform.android) && (Browser.safari)) {
-//        //For iPhone and Andriod To remove Address bar when viewing website on Safari Mobile
-//        // When ready...
-//        window.addEventListener("load",function() {
-//            // Set a timeout...
-//            setTimeout(function(){
-//                // Hide the address bar!
-//                window.scrollTo(0, 1);
-//            }, 0);
-//        });
-//    }
 });
 $(window).resize(function() {
     recalculation ();
@@ -784,11 +570,7 @@ function recalculation() {
 
     if ($('#next-track').length > 0) { $("#next-track").css("font-size", pageWidth/28+"px" ) };
 
-//    $("#top-control-bar").css("height", $("#top-control-bar .glyphicon").height());
-
     $("#playlist").css("margin-top",$(".audio-player").height()+16);
-
-//    $(".test-page-title").css("height",$(".audio-player").height()+4);
 
     $(".cell select").css("height",$("#buttom-control-bar .glyphicon").height()*0.6);
 };
